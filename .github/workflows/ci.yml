@@ -1,0 +1,42 @@
+# Give the GitHub Actions workflow a name.
+name: PowerPredict AI CI
+
+# Run the workflow whenever code is pushed to GitHub.
+on:
+  push:
+
+# Define the jobs that GitHub Actions will execute.
+jobs:
+
+  # Create a job for checking the Python project.
+  python-check:
+
+    # Use an Ubuntu virtual machine provided by GitHub.
+    runs-on: ubuntu-latest
+
+    # Define the steps inside the job.
+    steps:
+
+      # Download the repository code into the GitHub Actions runner.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install the required Python version.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # Install the Python dependencies required by the project.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Check the Python source files for syntax errors.
+      - name: Check Python syntax
+        run: |
+          python -m py_compile app.py
+          python -m py_compile src/monitoring/drift_detection.py
+          python -m py_compile src/models/retrain_model.py
+          python -m py_compile src/monitoring/prefect_pipeline.py
